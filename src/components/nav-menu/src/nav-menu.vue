@@ -53,6 +53,7 @@
 </template>
 
 <script lang="ts" setup>
+import router from "@/router";
 import { useStore } from "@/store";
 import { computed } from "@vue/reactivity";
 import {ref} from 'vue'
@@ -67,8 +68,11 @@ defineProps({
   isCollapse:Boolean
 })
 
-const subItemClick = (item:Object) =>{
+const subItemClick = (item:any) =>{
   console.log(item);
+  router.push({
+    path:item.url ?? '/not-found'
+  })
 }
 
 const handleOpen = (key: string, keyPath: string[]) => {
