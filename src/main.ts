@@ -19,11 +19,11 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 
+setupStore()
 app.use(router)
 app.use(store)
 app.use(ElementPlus)
 app.mount('#app')
-setupStore()
 
 
 interface DataType{

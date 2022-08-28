@@ -6,7 +6,7 @@
     </div>
 
     <el-menu
-      default-active="2"
+      :default-active="currentPath"
       :collapse = !isCollapse
       :width = "isCollapse ? '200px' : '58px'"
       class="el-menu-vertical"
@@ -53,10 +53,12 @@
 </template>
 
 <script lang="ts" setup>
-import router from "@/router";
 import { useStore } from "@/store";
 import { computed } from "@vue/reactivity";
 import {ref} from 'vue'
+import { useRoute, useRouter } from "vue-router";
+import { pathMapToMenu } from '@/utils/map-menus'
+
 const store = useStore();
 
 const userMenus = computed(() => {
@@ -64,9 +66,26 @@ const userMenus = computed(() => {
   return store.state.login.userMenus;
 });
 
+const router = useRouter()
+const route = useRoute()
+const currentPath = route.path
+console.log(userMenus);
+
+
+console.log(userMenus.value);
+
+const menu = pathMapToMenu(userMenus.value,currentPath)
+console.log(menu);
+if(menu){
+const defaultValue = ref(menu.id+'')
+
+}
+
+
 defineProps({
   isCollapse:Boolean
 })
+
 
 const subItemClick = (item:any) =>{
   console.log(item);
