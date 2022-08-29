@@ -3,28 +3,32 @@ import {IForm} from '@/base-ui/form'
 export const formConfig:IForm = {
     formItem: [
         {
+          field:'id',
           type:'input',
           label:'id',
           placeholder:'请输入id'
         },
         {
+          field:'name',
           type:'input',
           label: "用户名",
           rules: [],
           placeholder: "请输入用户名",
         },
         {
+          field:'password',
           type:'password',
           label: "密码",
           rules: [],
           placeholder: "请输入密码",
         },
         {
+          field:'sport',
           type:'select',
           label: "喜欢的运动",
           rules: [],
           placeholder: "请选择喜欢的运动",
-          option:[
+          options:[
               {
                   title:'篮球',
                   value:'basketball'
@@ -36,6 +40,7 @@ export const formConfig:IForm = {
           ]
         },
         {
+          field:'createTime',
           type:'datepicker',
           label: "创建时间",
           otherOptions:
