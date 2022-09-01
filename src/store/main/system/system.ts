@@ -15,10 +15,10 @@ const systemModule:Module<ISystemState,IRootState> = {
         }
     },
     mutations:{
-        changeUserList(state,userList:any[]){
+        changeUsersList(state,userList:any[]):void{
             state.userList = userList
         },
-        changeUserCount(state,userCount:number){
+        changeUsersCount(state,userCount:number):void{
             state.userCount = userCount
         },
         changeRoleList(state,roleList:any[]){
@@ -33,23 +33,41 @@ const systemModule:Module<ISystemState,IRootState> = {
             console.log(payload);
             const pageName = payload.pageName
             console.log(pageName);
-            let pageUrl = ''
-            switch(pageName){
-                case 'users':
-                    pageUrl = '/users/list'
-                    break
-                case 'role':
-                    pageUrl = '/role/list'
-                    break
-            }
-            console.log(pageUrl);
+            let pageUrl = `${pageName}/list`
             // 1.对页面发送请求
-            let pageResult  = await getPageListData(payload.pageUrl,payload.queryInfo)
+            let pageResult  = await getPageListData(pageUrl,payload.queryInfo)
             
             console.log(pageResult);
+            const changePageName = pageName?.slice(0,1).toUpperCase() + pageName.slice(1)
             const {list,totalCount} = pageResult.data
-            commit(`change${pageName.toUpperCase()}List`,list)
-            commit(`change${pageName.toUpperCase()}Count`,totalCount)
+            
+            commit(`change${changePageName}List`,list)
+            commit(`change${changePageName}Count`,totalCount)
+            
+        }
+    },
+    getters:{
+        pageListData(state){
+            return (pageName:string) => {
+                // return (state as any)[`${pageName}List`]
+                switch(pageName){
+                    case 'users':
+                        return state.userList
+                    case 'role':
+                        return state.roleList
+                }
+            }
+        },
+        pageListCount(state){
+            return (pageName:string) => {
+                // return (state as any)[`${pageName}List`]
+                switch(pageName){
+                    case 'users':
+                        return state.userCount
+                    case 'role':
+                        return state.roleCount
+                }
+            }
         }
     }
 }

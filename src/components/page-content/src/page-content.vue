@@ -1,5 +1,5 @@
 <template>
-  <HyTable :userList="userList" v-bind="contentTableConfig">
+  <HyTable v-model:page="page" :userList="dataList" :listCount="listCount" v-bind="props.contentTableConfig">
     <template #header-handler>
       <el-button>新增用户</el-button>
     </template>
@@ -21,55 +21,68 @@
       <el-button type="danger">删除</el-button>
     </template>
     <template #footer>
-      <el-pagination
-        v-model:currentPage="currentPage4"
-        v-model:page-size="pageSize4"
-        :page-sizes="[100, 200, 300, 400]"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      
     </template>
   </HyTable>
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref,computed,watch } from "vue";
 import { useStore } from 'vuex'
 import HyTable from "@/base-ui/table/index";
-import { contentTableConfig } from "@/views/main/system/user/config/content.config";
+// import { contentTableConfig } from "@/views/main/system/user/config/content.config";
 import { defineProps } from "vue";
 
 const store = useStore();
 
-const userList = store.state.system.userList;
-const userCount = store.state.system.userCount;
+// const userList = store.state.system.userList;
+// const userCount = store.state.system.userCount;
 
 const props = defineProps<{
-    pageName:String
+    pageName:String,
+    contentTableConfig:any
 }>()
 
+// 动态插槽
+// const otherSlotList = props.contentTableConfig?.propList.filter((item: any) => {
+//   if (item.slotName === 'createAt') return false
+//   if (item.slotName === 'updateAt') return false
+//   if (item.slotName === 'enable') return false
+//   if (item.slotName === 'handler') return false
+//   return true
+// })
+
 console.log(props.pageName);
-store.dispatch("system/getPageListAction", {
-  pageUrl: `/${props.pageName}/list`,
+
+const page = ref({
+  currentPage:1,
+  pageSize:10
+})
+watch(page,()=>{
+  console.log(page);
+  return getPageData(page)
+})
+
+// 发出网络请求
+const getPageData = (queryInfo:any = {}) => {
+  console.log('发出网络请求',queryInfo);
+  store.dispatch("system/getPageListAction", {
+  pageName:props.pageName,
   queryInfo: {
-    offset: 0,
-    size: 10,
+    offset: (page.value.currentPage - 1) * page.value.pageSize,
+    size: page.value.pageSize,
+    // ...queryInfo
   },
 });
+}
+getPageData()
+defineExpose({getPageData})
 
-const currentPage4 = ref(4);
-const pageSize4 = ref(100);
 
-const handleSizeChange = (val: number) => {
-  console.log(`${val} items per page`);
-};
-
-const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`);
-};
-
+const dataList = computed(()=> store.getters[`system/pageListData`](props.pageName))
+console.log('dataList',dataList);
+const listCount = computed(() => store.getters[`system/pageListCount`](props.pageName))
+console.log('listCount',listCount);
 const changeBtn = (status: number) => {
   if (status === 1) {
     status = 0;

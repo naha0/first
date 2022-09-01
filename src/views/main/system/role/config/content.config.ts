@@ -1,7 +1,7 @@
 export const contentTableConfig = {
     title: '角色列表',
     propList: [
-        { prop: "name", label: "角色名", minWidth: "100", slotName: "name" },
+        { prop: "name", label: "角色名", minWidth: "100"},
         {
             prop: "intro",
             label: "权限介绍",

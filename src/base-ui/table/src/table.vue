@@ -2,7 +2,7 @@
   <div class="content">
     <div class="header">
       <slot name="header">
-        <div class="title">{{title}}</div>
+        <div class="title">{{ title }}</div>
         <div class="handler">
           <slot name="header-handler"></slot>
         </div>
@@ -35,7 +35,15 @@
     </el-table>
     <div class="footer">
       <slot name="footer">
-        
+        <el-pagination
+          :currentPage="page.currentPage"
+          :page-size="page.pageSize"
+          :page-sizes="[5, 10, 15]"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="listCount"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
       </slot>
     </div>
   </div>
@@ -57,19 +65,41 @@ import { defineEmits } from "vue";
 //   },
 // });
 
-const props = defineProps<{
-  title:string;
-  userList: Array<object>;
-  propList: ITableItem[];
-  showIndexColumn: boolean;
-  showSelectColumn: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    title: string;
+    userList: Array<object>;
+    propList: ITableItem[];
+    showIndexColumn: boolean;
+    showSelectColumn: boolean;
+    listCount: number;
+    page?: {
+      currentPage:number,
+      pageSize:number
+    };
+  }>(),
+  {
+    page:()=>({
+      currentPage:1,
+      pageSize:10
+    })
+  }
+);
 
-const emit = defineEmits(["selectionChange"]);
+const emit = defineEmits(["selectionChange", "update:page"]);
 const multipleSelection = ref<UserTable[]>([]);
 const handleSelectionChange = (value: UserTable[]) => {
-  console.log(value);
   emit("selectionChange");
+};
+
+const handleSizeChange = (pageSize: number) => {
+  console.log(`${pageSize} items per page`);
+  emit("update:page", { ...props.page, pageSize });
+};
+
+const handleCurrentChange = (currentPage: number) => {
+  console.log(`current page: ${currentPage}`);
+  emit("update:page", { ...props.page, currentPage });
 };
 </script>
 
@@ -78,21 +108,21 @@ const handleSelectionChange = (value: UserTable[]) => {
   background-color: #fff;
   padding: 20px;
   border-top: 20px solid #f0f2f5;
-  .header{
+  .header {
     display: flex;
     margin-bottom: 20px;
-    .title{
+    .title {
       font-size: 18px;
       font-weight: 700;
       float: left;
     }
-    .handler{
+    .handler {
       flex: 1;
       display: flex;
       justify-content: flex-end;
     }
   }
-  .footer{
+  .footer {
     display: flex;
     justify-content: flex-end;
     margin-top: 20px;
