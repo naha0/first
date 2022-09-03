@@ -8,7 +8,9 @@
         </div>
       </slot>
     </div>
-    <el-table :data="props.userList" style="width: 100%" border>
+    <el-table :data="props.userList" style="width: 100%" border row-key="id"
+     :tree-props="{children:'children'}"
+     v-bind="childrenProps">
       <el-table-column
         v-if="showSelectColumn"
         @selection-change="handleSelectionChange"
@@ -24,7 +26,7 @@
         width="80"
       ></el-table-column>
       <template v-for="item in props.propList" :key="item.prop">
-        <el-table-column v-bind="item" align="center">
+        <el-table-column v-bind="item" align="center" show-overflow-tooltip>
           <template #default="scope">
             <slot :name="item.slotName" :row="scope.row">
               {{ scope.row[item.prop] }}
@@ -77,6 +79,7 @@ const props = withDefaults(
       currentPage:number,
       pageSize:number
     };
+    childrenProps:Object
   }>(),
   {
     page:()=>({
