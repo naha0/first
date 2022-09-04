@@ -1,7 +1,10 @@
 import { ref } from 'vue'
 import PageModel from '@/components/page-model';
 
-export function usePageModel():any {
+
+type CallbackFn = () => void
+
+export function usePageModel(newCallback?:CallbackFn,editCallback?:CallbackFn):any {
     const pageModelRef = ref<InstanceType<typeof PageModel>>();
     const defaultInfo = ref({})
     const handleNewData = () => {
@@ -10,6 +13,7 @@ export function usePageModel():any {
             console.log(pageModelRef.value);
             pageModelRef.value.dialogVisible = true
         }
+        newCallback && newCallback()
     }
 
     const handleEditData = (row: any) => {
@@ -18,6 +22,7 @@ export function usePageModel():any {
         if (pageModelRef.value) {
             pageModelRef.value.dialogVisible = true
         }
+        editCallback && editCallback()
     }
     return [pageModelRef, defaultInfo, handleNewData, handleEditData]
 }
