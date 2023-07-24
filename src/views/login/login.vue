@@ -1,5 +1,6 @@
 <template>
     <div class="login">
+    欢迎
         <login-panel></login-panel>
     </div>
 </template>
